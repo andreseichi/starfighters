@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getBattleResult } from "../services/battleService";
+import { getBattleResult, registerBattle } from "../services/battleService";
 import { Users } from "../types/users";
 
 export async function battle(req: Request, res: Response) {
@@ -7,7 +7,11 @@ export async function battle(req: Request, res: Response) {
 
   const { firstUser, secondUser } = users;
 
-  const mensagem = await getBattleResult(firstUser, secondUser);
+  const battleResult = await getBattleResult(firstUser, secondUser);
 
-  return res.send(mensagem);
+  const response = await registerBattle(battleResult, firstUser, secondUser);
+
+  console.log(response);
+
+  return res.send(battleResult);
 }

@@ -1,4 +1,10 @@
 import { api } from "../api/github";
+import {
+  updateDefeat,
+  updateDraw,
+  updateVictory,
+} from "../repositories/battleRepository";
+import { BattleResult } from "../types/battle";
 import { Repository } from "../types/repository";
 
 export async function getBattleResult(firstUser: string, secondUser: string) {
@@ -27,9 +33,7 @@ export async function getBattleResult(firstUser: string, secondUser: string) {
       };
 
       return response;
-    }
-
-    if (firstUserStars > secondUserStars) {
+    } else if (firstUserStars > secondUserStars) {
       const response = {
         winner: firstUser,
         loser: secondUser,
@@ -48,5 +52,30 @@ export async function getBattleResult(firstUser: string, secondUser: string) {
     }
   } catch (error) {
     console.error("error");
+  }
+}
+
+export async function registerBattle(
+  battleResult: BattleResult,
+  firstUser: string,
+  secondUser: string
+) {
+  if (battleResult.draw) {
+    updateDraw(firstUser);
+    updateDraw(secondUser);
+
+    return;
+  }
+
+  if (battleResult.winner === firstUser) {
+    updateVictory(firstUser);
+    updateDefeat(secondUser);
+
+    return;
+  } else {
+    updateVictory(secondUser);
+    updateDefeat(firstUser);
+
+    return;
   }
 }
